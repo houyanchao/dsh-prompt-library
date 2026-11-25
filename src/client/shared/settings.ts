@@ -1,114 +1,97 @@
-/**
- * 插件全局设置存储：集中承载原扩展 chrome.storage.local 上的各功能开关
- * （smartInputPlatformSettings / promptButtonPlatformSettings / smartEnterMode /
- * smartEnterToastCount / preventAutoScrollEnabled 等）。DSH 单平台，
- * 原按平台分键的设置折叠为单布尔。localStorage + Bus + storage 事件跨标签页同步。
- */
-import { registerStorageSync } from './storageSync.ts'
 import { Bus } from '../ui/bus.ts'
-import { DEFAULT_ACTIVE_COLOR_ID } from './palette.ts'
+import type { Context } from '@deepseek-ai/cordis'
 
-/** 智能回车发送模式（原 SMART_ENTER_MODES）。 */
 export type SmartEnterMode = 'doubleEnter' | 'ctrlEnter' | 'shiftEnter'
 
-/** 全部插件设置（缺省值与原扩展一致）。 */
-export interface PluginSettings {
-  /** 提示词按钮开关（原 promptButtonPlatformSettings[id] !== false，默认开）。 */
-  readonly promptButtonEnabled: boolean
-  /** 智能回车开关（原 smartInputPlatformSettings[id] === true，默认关）。 */
-  readonly smartEnterEnabled: boolean
-  /** 智能回车发送模式（原 smartEnterMode，默认 doubleEnter）。 */
+export interface InputSettings {
   readonly smartEnterMode: SmartEnterMode
-  /** 换行提示 toast 已展示次数（原 smartEnterToastCount，上限 5 次）。 */
+  readonly smartEnterEnabled: boolean
   readonly smartEnterToastCount: number
-  /** 阻止发送后跳底（原 preventAutoScrollEnabled !== false，默认开）。 */
   readonly preventAutoScrollEnabled: boolean
-  /** 追问功能开关（原 quickAskEnabled !== false，默认开）。 */
-  readonly quickAskEnabled: boolean
-  /** 时间轴激活色 id（原 timelineActiveColors[platform]，默认调色板第一项 black）。 */
-  readonly activeColorId: string
-  /** 对话导出开关（原 conversationExportPlatformSettings[id] !== false，默认开）。 */
-  readonly conversationExportEnabled: boolean
-  readonly messageScreenshotEnabled: boolean
-  readonly screenshotScale: number
-  readonly exportOptions?: {
-    readonly formatId: string
-    readonly themeId: string
-    readonly showTime: boolean
-    readonly showConversationTime: boolean
+}
+
+const KEY = 'dsh.prompt-library.input'
+const DEFAULTS: InputSettings = { smartEnterMode: 'doubleEnter', smartEnterEnabled: false, smartEnterToastCount: 0, preventAutoScrollEnabled: true }
+const bus = new Bus(DEFAULTS)
+let unsaved = false
+let reportUnsaved: () => void = () => {}
+
+export function parseInputSettings(value: unknown): Partial<InputSettings> {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) throw new Error('Invalid input settings')
+  const source = value as Record<string, unknown>
+  const patch: { -readonly [K in keyof InputSettings]?: InputSettings[K] } = {}
+  for (const key of ['smartEnterEnabled', 'preventAutoScrollEnabled'] as const) {
+    if (!(key in source)) continue
+    if (typeof source[key] !== 'boolean') throw new Error('Invalid input preference')
+    patch[key] = source[key]
   }
-  /** 消息旁时间标签开关（原 chatTimeLabelEnabled !== false，默认开）。 */
-  readonly chatTimeLabelEnabled: boolean
-  /** 闪记开关（原 aitNotepadEnabled !== false，默认开）。 */
-  readonly notepadEnabled: boolean
-  /** 显示时间轴开关（原 timelinePlatformSettings[id] !== false，默认开）。 */
-  readonly timelineEnabled: boolean
-  /** ↑/↓ 键节点导航开关（原 arrowKeysNavigationEnabled !== false，默认开）。 */
-  readonly arrowKeysNavEnabled: boolean
-  /** AI 回复完成弹窗提醒（原 timelineAICompleteToastEnabled !== false，默认开）。 */
-  readonly aiCompleteToastEnabled: boolean
-  /** AI 回复完成声音提醒（原 timelineAICompleteSoundEnabled === true，默认关）。 */
-  readonly aiCompleteSoundEnabled: boolean
-  /** 侧栏收藏面板开关（原 sidebarStarredPlatformSettings[id] !== false，默认开）。 */
-  readonly starredPanelEnabled: boolean
-  /** 从工作区原生列表隐藏已收藏的整段对话。 */
-  readonly hideStarredFromNativeList: boolean
-  /** 公式复制：LaTeX 开关（原 formulaLatexEnabled !== false，默认开）。 */
-  readonly formulaLatexEnabled: boolean
-  /** 公式复制：MathML 开关（原 formulaMathMLEnabled === true，默认关）。 */
-  readonly formulaMathMLEnabled: boolean
-  /** 公式复制：LaTeX 复制格式 id（原 formulaFormat，默认 none）。 */
-  readonly formulaFormat: string
+  if ('smartEnterMode' in source) {
+    const mode = source.smartEnterMode
+    if (mode !== 'doubleEnter' && mode !== 'ctrlEnter' && mode !== 'shiftEnter') throw new Error('Invalid Enter mode')
+    patch.smartEnterMode = mode
+  }
+  if ('smartEnterToastCount' in source) {
+    const count = source.smartEnterToastCount
+    if (typeof count !== 'number' || !Number.isSafeInteger(count) || count < 0) throw new Error('Invalid tip count')
+    patch.smartEnterToastCount = count
+  }
+  return patch
 }
 
-const DEFAULTS: PluginSettings = {
-  promptButtonEnabled: true,
-  smartEnterEnabled: false,
-  smartEnterMode: 'doubleEnter',
-  smartEnterToastCount: 0,
-  preventAutoScrollEnabled: true,
-  quickAskEnabled: true,
-  activeColorId: DEFAULT_ACTIVE_COLOR_ID,
-  conversationExportEnabled: true,
-  messageScreenshotEnabled: true,
-  screenshotScale: 2,
-  chatTimeLabelEnabled: true,
-  notepadEnabled: true,
-  timelineEnabled: true,
-  arrowKeysNavEnabled: true,
-  aiCompleteToastEnabled: true,
-  aiCompleteSoundEnabled: false,
-  starredPanelEnabled: true,
-  hideStarredFromNativeList: false,
-  formulaLatexEnabled: true,
-  formulaMathMLEnabled: false,
-  formulaFormat: 'none',
-}
-
-const STORAGE_KEY = 'dsh.timeline.settings'
-
-function load(): PluginSettings {
+function persist(settings: InputSettings): void {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (raw !== null) {
-      const parsed = JSON.parse(raw) as Partial<PluginSettings>
-      return { ...DEFAULTS, ...parsed }
-    }
-  } catch { /* 损坏数据回退默认 */ }
-  return DEFAULTS
+    localStorage.setItem(KEY, JSON.stringify(settings))
+    unsaved = false
+  } catch {
+    if (!unsaved) reportUnsaved()
+    unsaved = true
+  }
 }
 
-const bus = new Bus<PluginSettings>(load())
+function normalize(value: unknown): InputSettings {
+  const source = (typeof value === 'object' && value !== null ? value : {}) as Partial<InputSettings>
+  return {
+    smartEnterMode: source.smartEnterMode === 'ctrlEnter' || source.smartEnterMode === 'shiftEnter' ? source.smartEnterMode : 'doubleEnter',
+    smartEnterEnabled: source.smartEnterEnabled === true,
+    smartEnterToastCount: typeof source.smartEnterToastCount === 'number' ? source.smartEnterToastCount : 0,
+    preventAutoScrollEnabled: source.preventAutoScrollEnabled !== false,
+  }
+}
 
-registerStorageSync(STORAGE_KEY, () => { bus.set(load()) })
+function load(): InputSettings {
+  if (unsaved) return bus.get()
+  const raw = localStorage.getItem(KEY)
+  if (raw !== null) return normalize(JSON.parse(raw))
+  let migrated = DEFAULTS
+  try { migrated = normalize(JSON.parse(localStorage.getItem('dsh.timeline.settings') ?? '{}')) } catch { /* Defaults for corrupt old settings. */ }
+  persist(migrated)
+  return migrated
+}
 
-/** 插件设置 API。 */
+export function bindInputSettings(ctx: Context, onUnsaved: () => void = () => {}): void {
+  ctx.effect(() => {
+    reportUnsaved = onUnsaved
+    const sync = (): void => { try { bus.set(load()) } catch { /* Keep the current memory snapshot. */ } }
+    sync()
+    const refresh = (event: StorageEvent): void => {
+      if (event.storageArea === localStorage && (event.key === KEY || event.key === null)) sync()
+    }
+    window.addEventListener('storage', refresh)
+    return () => {
+      window.removeEventListener('storage', refresh)
+      reportUnsaved = () => {}
+    }
+  }, 'dsh-prompt-library: input settings')
+}
+
 export const settingsStore = {
+  get: (): InputSettings => bus.get(),
   subscribe: bus.subscribe,
-  get: (): PluginSettings => bus.get(),
-  set(patch: Partial<PluginSettings>): void {
-    const next = { ...bus.get(), ...patch }
+  set(patch: Partial<InputSettings>): void {
+    let current = bus.get()
+    try { current = load() } catch { /* Local storage may be disabled. */ }
+    const next = normalize({ ...current, ...patch })
+    persist(next)
     bus.set(next)
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)) } catch { /* 忽略 */ }
   },
 }

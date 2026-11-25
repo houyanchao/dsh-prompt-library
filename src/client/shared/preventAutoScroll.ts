@@ -46,7 +46,7 @@ const CLICK_SNAPSHOT_TTL = 800
 const NAV_KEYS = new Set(['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End'])
 
 /** DSH composer 的 textarea（与智能回车共用选择器）。 */
-const INPUT_SELECTOR = '[data-input-scroll] textarea'
+const INPUT_SELECTOR = '[data-input-scroll] textarea, [data-input-scroll] [contenteditable=true]'
 /** DSH 会话滚动容器（时间轴同款选择器）。 */
 const SCROLL_SELECTOR = '[data-conversation-scroll]'
 
@@ -93,7 +93,8 @@ class ScrollAnchor {
     if (editor === null) return
 
     // 输入框为空（占位态）不会发送，跳过。
-    if (!(editor instanceof HTMLTextAreaElement) || editor.value.trim().length === 0) return
+    const text = editor instanceof HTMLTextAreaElement ? editor.value : editor.textContent ?? ''
+    if (text.trim().length === 0) return
 
     this.maybeStartPin()
   }

@@ -1,73 +1,46 @@
-<div align="center">
+# DSH Prompt Library
 
-# dsh-timeline
+[简体中文](./README.md)
 
-**A productivity plugin for [DeepSeek Harness](https://deepseek-harness.github.io/deepseek-harness/)**
+Save reusable instructions in DeepSeek Harness. Open the lightning button next to the composer to append a saved prompt to your draft. You can edit the draft before sending it. This DSH plugin was extracted from [dsh-timeline](https://github.com/houyanchao/dsh-timeline).
 
-Timeline navigation · Starred folders · Prompt library · Conversation export · Formula copy · Screenshots
+## Usage
 
-[![DSH Plugin](https://img.shields.io/badge/DeepSeek%20Harness-plugin-6128FF)](https://deepseek-harness.github.io/deepseek-harness/)
-[![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](./LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/houyanchao/dsh-timeline/pulls)
-[![GitHub stars](https://img.shields.io/github/stars/houyanchao/dsh-timeline?style=social)](https://github.com/houyanchao/dsh-timeline)
+- Click the lightning button to open the library. Click **+** or **Add Prompt** to open the manager, where you can add, edit, delete, pin and reorder prompts.
+- Pinned prompts appear first. When you have five or more prompts, a search field filters the list by title or content.
+- Click a prompt to append it after your draft, separated by a blank line. The composer regains focus with the caret at the end.
+- The **Settings** tab includes preserving your reading position after sending and an optional Enter-key mode. Choose double Enter, Ctrl/⌘ + Enter or Shift + Enter to send.
+- You can hide the lightning button in the manager and reopen it from DSH **Settings → General → Prompt Library**.
 
-[简体中文](./README.md) | **English**
+## Storage and migration
 
-![Feature overview](./docs/intro.png)
+On first activation, the plugin copies the prompts, order, pins and relevant input preferences from timeline on the same DSH origin and browser profile. It then saves changes independently and shares library changes across tabs on that origin. The **Data Sync** tab exports prompts and input preferences to a JSON backup and restores prompt libraries from this plugin or timeline. Merge matches prompts by ID. Overwrite replaces the list.
 
-</div>
+If you keep timeline enabled alongside this plugin, disable its prompt button, smart Enter and reading-position protection wherever you use the standalone equivalents. If you hid timeline’s button before migration, use DSH **Settings → General → Prompt Library** to enable the standalone button.
 
-## 📖 What is dsh-timeline?
+## Install from GitHub
 
-dsh-timeline is a feature-enhancement plugin for [DeepSeek Harness](https://deepseek-harness.github.io/deepseek-harness/).
-
-Once an AI conversation gets long, finding things becomes a chore: revisiting a question means endless scrolling, key takeaways get scattered across sessions, and formulas or content are hard to take with you. dsh-timeline was built for exactly this — it renders a visual timeline beside the conversation so you can jump anywhere in one click, and rounds out the workflow with starred folders, pin markers, quick notes, a prompt library, and multi-format export: find it, note it, organize it, take it with you.
-
-The plugin blends right into the host UI: it follows the light / dark theme in real time, ships with an English / Chinese interface, and every feature can be toggled independently — install it and go, without disrupting your habits.
-
-## ✨ Features
-
-- 🧭 **Timeline navigation** — a rail on the right maps every question; click to jump, with a compact mode, virtualized rendering, and `↑` / `↓` shortcuts
-- 📌 **Key-point markers** — long-press a timeline node to pin it, so important questions stand out
-- 📋 **Question list** — numbered list of all questions, active row follows your reading position
-- ⭐ **Starred folders** — file whole conversations, single questions, and notes into two-level folders; drag to organize, pin, and search
-- 📝 **Notepad** — a draggable, resizable quick-notes panel for capturing ideas
-- 💬 **Prompt library** — save frequently used prompts and insert them from beside the composer in one click
-- ⌨️ **Smart input** — `Enter` for a newline, double-`Enter` to send; quote selected text as a follow-up; keep your reading position after sending
-- 📤 **Conversation export** — Markdown / TXT / JSON / CSV / PNG / PDF, with math formulas rendered as usual
-- 🧮 **Formula copy** — click a formula to copy it as LaTeX or MathML, ready to paste into Word
-- 📸 **Message screenshots** — click Screenshot below a reply, select questions or replies, then choose a resolution to copy or download one PNG. Captures that exceed the size limit are scaled down
-- 🔔 **Reply alerts** — toast and optional sound when a reply finishes while you are reading earlier messages
-- 💾 **Data backup** — one-click export / import of all plugin data (JSON)
-- 🎨 **Native feel** — follows the host's light / dark theme, English / Chinese UI, per-feature toggles
-
-## 📦 Installation
-
-Install from npm (recommended):
+With the DSH CLI and pnpm on your PATH, run the following commands.
 
 ```bash
-# install the dsh-timeline plugin
-dsh plugin --profile web add dsh-timeline
-
-# launch DeepSeek Harness
+dsh plugin --profile web add https://github.com/houyanchao/dsh-prompt-library/archive/refs/heads/main.tar.gz
 dsh web
 ```
 
-Upgrade:
+## Build and install locally
+
+Use Node.js 24.11 or later and an installed DSH CLI. Run these commands at the repository root.
 
 ```bash
-dsh plugin --profile web update dsh-timeline
+npm ci
+npm run bundle
+npm pack
+dsh plugin --profile web add "$PWD/dsh-prompt-library-0.1.0.tgz"
+dsh web
 ```
 
-> [!TIP]
-> Seeing `command not found: dsh`? You are running DSH from a source checkout without the global CLI. Run the commands above from the root of the DSH source repository, replacing the leading `dsh` with `pnpm dsh` — e.g. `pnpm dsh plugin --profile web add dsh-timeline`.
+Use `npm run typecheck` for TypeScript checks and `npm run watch` to rebuild while editing.
 
-## ⭐ Support
+## License
 
-If dsh-timeline helped you, share it with your friends — and a GitHub Star helps more people discover it!
-
-## 📄 License
-
-This project is open-sourced under the [GPL-3.0-or-later](./LICENSE) license.
-
-You are free to use, study, modify, and distribute this project, but derivative works must be released under the same license and keep the original copyright notice. Please make sure your usage complies with the license before any commercial use.
+[GPL-3.0-or-later](./LICENSE)
