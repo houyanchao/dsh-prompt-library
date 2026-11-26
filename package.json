@@ -48,6 +48,7 @@
     }
   },
   "scripts": {
+    "test": "node --test",
     "bundle": "tsdown && tsc -p tsconfig.types.json",
     "watch": "tsdown --watch",
     "typecheck": "tsc --noEmit"

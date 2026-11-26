@@ -9,40 +9,6 @@ import css from './panel.module.css'
 
 type T = TranslateNS<typeof NS>
 
-export interface ToggleProps {
-  readonly checked: boolean
-  readonly ariaLabel?: string
-  readonly onChange: (checked: boolean) => void
-}
-
-/** 开关（原 .ait-toggle-switch）。 */
-export function Toggle({ checked, ariaLabel, onChange }: ToggleProps) {
-  return (
-    <label className={css.toggle}>
-      <input type="checkbox" checked={checked} aria-label={ariaLabel} onChange={(e) => { onChange(e.target.checked) }} />
-      <span className={css.toggleSlider} />
-    </label>
-  )
-}
-
-interface SettingItemProps {
-  readonly label: React.ReactNode
-  readonly hint: React.ReactNode
-  readonly control: React.ReactNode
-}
-
-/** 设置行（原 .setting-item）。 */
-export function SettingItem({ label, hint, control }: SettingItemProps) {
-  return (
-    <div className={css.settingItem}>
-      <div className={css.settingInfo}>
-        <div className={css.settingLabel}>{label}</div>
-        <div className={css.settingHint}>{hint}</div>
-      </div>
-      {control}
-    </div>
-  )
-}
 export function PromptTab({ t }: { readonly t: T }) {
   const library = useSyncExternalStore(promptsStore.subscribe, promptsStore.get)
   const prompts = library.prompts
@@ -52,7 +18,7 @@ export function PromptTab({ t }: { readonly t: T }) {
   const actionTooltip = (id: string, text: string) => ({
     'aria-label': text,
     onMouseEnter: (e: React.MouseEvent<HTMLButtonElement>) => {
-      tooltip.show(id, e.currentTarget, text, {})
+      tooltip.show(id, e.currentTarget, text)
     },
     onMouseLeave: () => { tooltip.hide() },
   })
@@ -66,7 +32,6 @@ export function PromptTab({ t }: { readonly t: T }) {
       title: t('panel.promptDeleteConfirm'),
       confirmText: t('common.delete'),
       cancelText: t('common.cancel'),
-      confirmTextType: 'danger',
     })
     if (confirmed && change(() => promptsStore.remove(id))) {
       toast.success(t('panel.promptDeleted'))
@@ -74,134 +39,117 @@ export function PromptTab({ t }: { readonly t: T }) {
   }
 
   return (
-    <div className={css.settingsRoot}>
-      <div className={css.settingsScroll}>
-        <div className={css.promptListSection}>
-          <div className={css.promptListHeader}>
-            <div className={css.promptListTitle}>{t('panel.promptListTitle')}</div>
-            <button type="button" className={css.promptAddBtn} onClick={() => { setModal({ mode: 'add' }) }}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
-              </svg>
-              <span>{t('panel.promptAdd')}</span>
-            </button>
-          </div>
-          <div className={css.promptListContainer}>
-            {sorted.length === 0
-              ? (
-                <div className={css.promptEmpty}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                    <polyline points="14 2 14 8 20 8" />
-                    <line x1="16" y1="13" x2="8" y2="13" />
-                    <line x1="16" y1="17" x2="8" y2="17" />
-                  </svg>
-                  <span>{t('panel.promptEmpty')}</span>
-                </div>
-              )
-              : sorted.map(prompt => (
-                <div key={prompt.id} className={css.promptItem}>
-                  <div className={css.promptItemContent}>
-                    <div className={css.promptItemHeader}>
-                      <div className={css.promptItemName}>
-                        {prompt.pinned === true
-                          ? (
-                            <span className={css.promptPinBadge}>
-                              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden>
-                                <line x1="5" y1="3" x2="19" y2="3" />
-                                <line x1="12" y1="7" x2="12" y2="21" />
-                                <polyline points="8 11 12 7 16 11" />
-                              </svg>
-                            </span>
-                          )
-                          : null}
-                        <span className={css.promptItemNameText}>{prompt.name}</span>
-                      </div>
-                      <div className={css.promptItemActions}>
-                        <button
-                          type="button"
-                          className={prompt.pinned === true ? `${css.promptItemBtn} ${css.promptPinBtnActive}` : css.promptItemBtn}
-                          {...actionTooltip('prompt-pin', t('panel.promptPin'))}
-                          onClick={() => {
-                            if (!change(() => promptsStore.togglePin(prompt.id))) return
-                            const nowPinned = prompt.pinned !== true
-                            toast.success(nowPinned ? t('panel.promptPinned') : t('panel.promptUnpinned'))
-                          }}
-                        >
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden>
-                            <line x1="5" y1="3" x2="19" y2="3" />
-                            <line x1="12" y1="7" x2="12" y2="21" />
-                            <polyline points="8 11 12 7 16 11" />
-                          </svg>
-                        </button>
-                        <button
-                          type="button"
-                          className={css.promptItemBtn}
-                          {...actionTooltip('prompt-edit', t('common.edit'))}
-                          onClick={() => { setModal({ mode: 'edit', prompt }) }}
-                        >
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                          </svg>
-                        </button>
-                        <button
-                          type="button"
-                          className={`${css.promptItemBtn} ${css.promptDeleteBtn}`}
-                          {...actionTooltip('prompt-delete', t('common.delete'))}
-                          onClick={() => { void deletePrompt(prompt.id) }}
-                        >
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-                            <polyline points="3 6 5 6 21 6" />
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                          </svg>
-                        </button>
-                        <button
-                          type="button"
-                          className={css.promptItemBtn}
-                          {...actionTooltip('prompt-move-up', t('panel.promptMoveUp'))}
-                          onClick={() => { change(() => promptsStore.move(prompt.id, 'up')) }}
-                        >
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-                            <polyline points="18 15 12 9 6 15" />
-                          </svg>
-                        </button>
-                        <button
-                          type="button"
-                          className={css.promptItemBtn}
-                          {...actionTooltip('prompt-move-down', t('panel.promptMoveDown'))}
-                          onClick={() => { change(() => promptsStore.move(prompt.id, 'down')) }}
-                        >
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-                            <polyline points="6 9 12 15 18 9" />
-                          </svg>
-                        </button>
-                      </div>
+    <>
+      <div className={css.promptListSection}>
+        <div className={css.promptListHeader}>
+          <div className={css.promptListTitle}>{t('panel.promptListTitle')}</div>
+          <button type="button" className={css.promptAddBtn} onClick={() => { setModal({ mode: 'add' }) }}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            <span>{t('panel.promptAdd')}</span>
+          </button>
+        </div>
+        <div className={css.promptListContainer}>
+          {sorted.length === 0
+            ? (
+              <div className={css.promptEmpty}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                  <line x1="16" y1="13" x2="8" y2="13" />
+                  <line x1="16" y1="17" x2="8" y2="17" />
+                </svg>
+                <span>{t('panel.promptEmpty')}</span>
+              </div>
+            )
+            : sorted.map(prompt => (
+              <div key={prompt.id} className={css.promptItem}>
+                <div className={css.promptItemContent}>
+                  <div className={css.promptItemHeader}>
+                    <div className={css.promptItemName}>
+                      {prompt.pinned === true
+                        ? (
+                          <span className={css.promptPinBadge}>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden>
+                              <line x1="5" y1="3" x2="19" y2="3" />
+                              <line x1="12" y1="7" x2="12" y2="21" />
+                              <polyline points="8 11 12 7 16 11" />
+                            </svg>
+                          </span>
+                        )
+                        : null}
+                      <span className={css.promptItemNameText}>{prompt.name}</span>
                     </div>
-                    <div className={css.promptItemText}>
-                      <span className={css.promptItemTextContent}>{prompt.content}</span>
+                    <div className={css.promptItemActions}>
+                      <button
+                        type="button"
+                        className={prompt.pinned === true ? `${css.promptItemBtn} ${css.promptPinBtnActive}` : css.promptItemBtn}
+                        {...actionTooltip('prompt-pin', t('panel.promptPin'))}
+                        onClick={() => {
+                          if (!change(() => promptsStore.togglePin(prompt.id))) return
+                          const nowPinned = prompt.pinned !== true
+                          toast.success(nowPinned ? t('panel.promptPinned') : t('panel.promptUnpinned'))
+                        }}
+                      >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden>
+                          <line x1="5" y1="3" x2="19" y2="3" />
+                          <line x1="12" y1="7" x2="12" y2="21" />
+                          <polyline points="8 11 12 7 16 11" />
+                        </svg>
+                      </button>
+                      <button
+                        type="button"
+                        className={css.promptItemBtn}
+                        {...actionTooltip('prompt-edit', t('common.edit'))}
+                        onClick={() => { setModal({ mode: 'edit', prompt }) }}
+                      >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                        </svg>
+                      </button>
+                      <button
+                        type="button"
+                        className={`${css.promptItemBtn} ${css.promptDeleteBtn}`}
+                        {...actionTooltip('prompt-delete', t('common.delete'))}
+                        onClick={() => { void deletePrompt(prompt.id) }}
+                      >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+                          <polyline points="3 6 5 6 21 6" />
+                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                        </svg>
+                      </button>
+                      <button
+                        type="button"
+                        className={css.promptItemBtn}
+                        {...actionTooltip('prompt-move-up', t('panel.promptMoveUp'))}
+                        onClick={() => { change(() => promptsStore.move(prompt.id, 'up')) }}
+                      >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+                          <polyline points="18 15 12 9 6 15" />
+                        </svg>
+                      </button>
+                      <button
+                        type="button"
+                        className={css.promptItemBtn}
+                        {...actionTooltip('prompt-move-down', t('panel.promptMoveDown'))}
+                        onClick={() => { change(() => promptsStore.move(prompt.id, 'down')) }}
+                      >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+                          <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                      </button>
                     </div>
                   </div>
+                  <div className={css.promptItemText}>
+                    <span className={css.promptItemTextContent}>{prompt.content}</span>
+                  </div>
                 </div>
-              ))}
-          </div>
+              </div>
+            ))}
         </div>
-      </div>
-      {/* 底部悬浮：显示提示词按钮（DSH 单平台，开关直接内联，不再弹平台子弹窗） */}
-      <div className={css.bottomDivider} />
-      <div className={css.bottomSection}>
-        <SettingItem
-          label={t('panel.promptBtnLabel')}
-          hint={t('panel.promptBtnHint')}
-          control={(
-            <Toggle
-              ariaLabel={t('panel.promptBtnLabel')}
-              checked={library.promptButtonEnabled}
-              onChange={(enabled) => { change(() => promptsStore.setButtonEnabled(enabled)) }}
-            />
-          )}
-        />
       </div>
       {modal !== null
         ? (
@@ -212,7 +160,7 @@ export function PromptTab({ t }: { readonly t: T }) {
           />
         )
         : null}
-    </div>
+    </>
   )
 }
 

@@ -12,7 +12,7 @@
   z-index: 2147483647;
 }
 
-/* ==== Toast（原 GlobalToastManager 内联样式 + styles.css） ==== */
+/* 操作结果提示 */
 .toast {
   position: fixed;
   display: flex;
@@ -23,23 +23,6 @@
   white-space: nowrap;
   max-width: 400px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-}
-
-.toastMultiline {
-  box-sizing: border-box;
-  max-width: min(400px, calc(100vw - 16px));
-  white-space: pre-line;
-  overflow-wrap: anywhere;
-}
-
-.toastMultilineCentered {
-  inset-inline: 0;
-  width: max-content;
-  margin-inline: auto;
-}
-
-/* 默认视觉（useClassStyles=false 时叠加） */
-.toastDefaultVisual {
   padding: 10px 16px;
   border-radius: 12px;
   font-size: 13px;
@@ -50,19 +33,16 @@
   transform: translateY(-10px);
 }
 
-.toastVisible {
-  opacity: 1 !important;
-}
-
-.toastDefaultVisual.toastVisible {
-  transform: translateY(0) !important;
+.toast.toastVisible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .toastIcon {
   font-size: 16px;
 }
 
-/* ==== Tooltip（原 timeline-tooltip-base + 箭头 + overlay mini） ==== */
+/* 按钮和提示词全文的悬浮提示 */
 .tooltipBase {
   position: fixed;
   border-radius: 8px;
@@ -101,24 +81,6 @@
   pointer-events: none;
 }
 
-.tooltipBase[data-placement='top']::before {
-  bottom: -8px;
-  left: var(--arrow-offset, 50%);
-  margin-left: -8px;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-  border-top: 8px solid var(--ui-tooltip-border, #e2e8f0);
-}
-
-.tooltipBase[data-placement='top']::after {
-  bottom: -6px;
-  left: var(--arrow-offset, 50%);
-  margin-left: -7px;
-  border-left: 7px solid transparent;
-  border-right: 7px solid transparent;
-  border-top: 7px solid var(--ui-tooltip-bg, #f8fafc);
-}
-
 .tooltipBase[data-placement='bottom']::before {
   top: -8px;
   left: var(--arrow-offset, 50%);
@@ -135,24 +97,6 @@
   border-left: 7px solid transparent;
   border-right: 7px solid transparent;
   border-bottom: 7px solid var(--ui-tooltip-bg, #f8fafc);
-}
-
-.tooltipBase[data-placement='left']::before {
-  right: -8px;
-  top: var(--arrow-offset, 50%);
-  margin-top: -8px;
-  border-top: 8px solid transparent;
-  border-bottom: 8px solid transparent;
-  border-left: 8px solid var(--ui-tooltip-border, #e2e8f0);
-}
-
-.tooltipBase[data-placement='left']::after {
-  right: -6px;
-  top: var(--arrow-offset, 50%);
-  margin-top: -7px;
-  border-top: 7px solid transparent;
-  border-bottom: 7px solid transparent;
-  border-left: 7px solid var(--ui-tooltip-bg, #f8fafc);
 }
 
 .tooltipBase[data-placement='right']::before {
@@ -178,328 +122,13 @@
   display: none !important;
 }
 
-/* 尺寸档位（show 的 size 参数）：只动内边距与字号，medium 即 .tooltipBase 本体。 */
 .tooltipSmall {
   padding: 4px 8px;
   font-size: 12px;
   border-radius: 6px;
 }
 
-.tooltipLarge {
-  padding: 12px 16px;
-  font-size: 17px;
-}
-
-/* 二级悬浮 mini tooltip（原 timeline-tooltip-overlay） */
-.tooltipMini {
-  position: fixed;
-  z-index: 2147483649;
-  pointer-events: none;
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 500;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  white-space: nowrap;
-  /* 黑底统一取宿主原生 tooltip 的底板 token（深浅主题自带两档深色）。 */
-  background: var(--dsw-alias-tooltip-bg);
-  color: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  opacity: 0;
-  transition: opacity 0.12s ease;
-}
-
-.tooltipMini[data-mini-theme='light'] {
-  background: #fff;
-  color: #1f2937;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-}
-
-.tooltipMini.tooltipVisible {
-  opacity: 1;
-}
-
-/* ==== Dropdown（原 global-dropdown） ==== */
-.dropdownOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 2147483646;
-  background: transparent;
-  cursor: default;
-  pointer-events: auto;
-}
-
-.dropdown {
-  position: fixed;
-  z-index: 2147483647;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
-  padding: 6px 0;
-  opacity: 0;
-  transform: translateY(-8px);
-  transition: opacity 0.2s ease, transform 0.2s ease;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  font-size: 14px;
-  max-height: 400px;
-  overflow-y: auto;
-  pointer-events: auto;
-}
-
-.host[data-theme='dark'] .dropdown {
-  background: #262626;
-  border-color: #404040;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-.dropdown.dropdownVisible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.dropdown[data-placement^='top'] {
-  transform-origin: bottom center;
-}
-
-.dropdown[data-placement^='bottom'] {
-  transform-origin: top center;
-}
-
-.dropdownItem {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 12px;
-  margin: 0 6px;
-  border-radius: 6px;
-  cursor: pointer;
-  color: #1f2937;
-  transition: background-color 0.1s ease;
-  user-select: none;
-}
-
-.host[data-theme='dark'] .dropdownItem {
-  color: #f5f5f5;
-}
-
-.dropdownItem:hover {
-  background-color: #f3f4f6;
-}
-
-.host[data-theme='dark'] .dropdownItem:hover {
-  background-color: #333333;
-}
-
-.dropdownItem:active {
-  background-color: #e5e7eb;
-}
-
-.host[data-theme='dark'] .dropdownItem:active {
-  background-color: #3a3a3a;
-}
-
-.dropdownItemDisabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  pointer-events: none;
-}
-
-.dropdownItemDanger {
-  color: #ef4444;
-}
-
-.host[data-theme='dark'] .dropdownItemDanger {
-  color: #f87171;
-}
-
-.dropdownItemDanger:hover {
-  background-color: #fee2e2;
-}
-
-.host[data-theme='dark'] .dropdownItemDanger:hover {
-  background-color: #450a0a;
-}
-
-/* "新建/添加 xxx" 类操作项 */
-.dropdownItemCreate .dropdownItemLabel {
-  font-style: italic;
-  color: #6b7280;
-  transition: color 0.15s ease;
-}
-
-.host[data-theme='dark'] .dropdownItemCreate .dropdownItemLabel {
-  color: #9ca3af;
-}
-
-.dropdownItemCreate:hover .dropdownItemLabel {
-  color: #1f2937;
-}
-
-.host[data-theme='dark'] .dropdownItemCreate:hover .dropdownItemLabel {
-  color: #f5f5f5;
-}
-
-.dropdownItemCreate .dropdownItemIcon svg {
-  color: #6128FF;
-}
-
-.host[data-theme='dark'] .dropdownItemCreate .dropdownItemIcon svg {
-  color: #8B5CF6;
-}
-
-.dropdownItemCreate:hover .dropdownItemIcon svg {
-  color: #6128FF;
-}
-
-.host[data-theme='dark'] .dropdownItemCreate:hover .dropdownItemIcon svg {
-  color: #8B5CF6;
-}
-
-.dropdownItemIcon {
-  font-size: 16px;
-  line-height: 1;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-}
-
-.dropdownItemIcon svg {
-  width: 16px;
-  height: 16px;
-  color: #6b7280;
-}
-
-.host[data-theme='dark'] .dropdownItemIcon svg {
-  color: #9ca3af;
-}
-
-.dropdownItem:hover .dropdownItemIcon svg {
-  color: #374151;
-}
-
-.host[data-theme='dark'] .dropdownItem:hover .dropdownItemIcon svg {
-  color: #d1d5db;
-}
-
-.dropdownItemDanger .dropdownItemIcon svg {
-  color: #ef4444;
-}
-
-.host[data-theme='dark'] .dropdownItemDanger .dropdownItemIcon svg {
-  color: #f87171;
-}
-
-.dropdownItemDanger:hover .dropdownItemIcon svg {
-  color: #ef4444;
-}
-
-.dropdownItemLabel {
-  flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.4;
-}
-
-.dropdownDivider {
-  height: 1px;
-  background-color: #e5e7eb;
-  margin: 6px 0;
-}
-
-.host[data-theme='dark'] .dropdownDivider {
-  background-color: #404040;
-}
-
-.dropdown::-webkit-scrollbar {
-  width: 8px;
-}
-
-.dropdown::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.dropdown::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 4px;
-}
-
-.dropdown::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
-}
-
-.host[data-theme='dark'] .dropdown::-webkit-scrollbar-thumb {
-  background: #404040;
-}
-
-.host[data-theme='dark'] .dropdown::-webkit-scrollbar-thumb:hover {
-  background: #525252;
-}
-
-@media (max-width: 640px) {
-  .dropdown {
-    max-width: calc(100vw - 32px);
-  }
-}
-
-/* 子菜单 */
-.dropdownItemArrow {
-  margin-left: auto;
-  padding-left: 12px;
-  color: #9ca3af;
-  font-size: 18px;
-  line-height: 1;
-  flex-shrink: 0;
-  transition: color 0.15s ease;
-}
-
-.host[data-theme='dark'] .dropdownItemArrow {
-  color: #6b7280;
-}
-
-.dropdownItemHasSub:hover .dropdownItemArrow {
-  color: #6b7280;
-}
-
-.host[data-theme='dark'] .dropdownItemHasSub:hover .dropdownItemArrow {
-  color: #9ca3af;
-}
-
-.dropdownSubmenu {
-  z-index: 2147483647 !important;
-}
-
-/* 菜单文字不截断（原 .formula-dropdown .global-dropdown-item-label 覆盖，公式菜单用） */
-.dropdownNoTruncate .dropdownItemLabel {
-  overflow: visible;
-  text-overflow: unset;
-  white-space: nowrap;
-}
-
-.dropdownItemSubActive {
-  background-color: #f3f4f6;
-}
-
-.host[data-theme='dark'] .dropdownItemSubActive {
-  background-color: #374151;
-}
-
-.dropdownItemSubActive:hover {
-  background-color: #e5e7eb;
-}
-
-.host[data-theme='dark'] .dropdownItemSubActive:hover {
-  background-color: #3a3a3a;
-}
-
-/* ==== Popconfirm（原 global-popconfirm） ==== */
+/* 删除提示词确认框 */
 .popconfirmOverlay {
   position: fixed;
   top: 0;
@@ -556,17 +185,6 @@
   color: #f3f4f6;
 }
 
-.popconfirmText {
-  font-size: 14px;
-  color: #6b7280;
-  line-height: 1.6;
-  margin-bottom: 20px;
-}
-
-.host[data-theme='dark'] .popconfirmText {
-  color: #9ca3af;
-}
-
 .popconfirmActions {
   display: flex;
   gap: 12px;
@@ -620,33 +238,6 @@
   background: #dc2626;
 }
 
-.popconfirmBtnPrimary {
-  background: #3b82f6;
-  color: #ffffff;
-}
-
-.popconfirmBtnPrimary:hover {
-  background: #2563eb;
-}
-
-.popconfirmBtnSuccess {
-  background: #22c55e;
-  color: #ffffff;
-}
-
-.popconfirmBtnSuccess:hover {
-  background: #16a34a;
-}
-
-.popconfirmBtnDefault {
-  background: #1a1a1a;
-  color: #ffffff;
-}
-
-.popconfirmBtnDefault:hover {
-  background: #333333;
-}
-
 @media (max-width: 640px) {
   .popconfirm {
     width: 320px;
@@ -658,10 +249,6 @@
 
   .popconfirmTitle {
     font-size: 16px;
-  }
-
-  .popconfirmText {
-    font-size: 13px;
   }
 
   .popconfirmBtn {

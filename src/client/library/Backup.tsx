@@ -12,8 +12,8 @@ const SYNC_TOAST_COLOR = {
   dark: { backgroundColor: 'var(--dsw-alias-tooltip-bg)', textColor: '#f5f5f5', borderColor: 'var(--dsw-alias-tooltip-bg)' },
 }
 
-/** 数据同步 tab（原 DataSyncTab，仅本地文件导入导出，云同步不迁移）。 */
-export function DataSyncTab({ t }: { readonly t: T }) {
+/** 提示词备份的本地文件导入与导出。 */
+export function PromptBackupTab({ t }: { readonly t: T }) {
   const [importMode, setImportMode] = useState<'merge' | 'overwrite'>('merge')
   const [status, setStatus] = useState<{ type: 'loading' | 'error'; message: string } | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -24,10 +24,10 @@ export function DataSyncTab({ t }: { readonly t: T }) {
       setStatus({ type: 'loading', message: t('panel.syncExporting') })
       exportBackup()
       setStatus(null)
-      toast.success(t('panel.syncExportSuccess'), null, { color: SYNC_TOAST_COLOR })
+      toast.success(t('panel.syncExportSuccess'), SYNC_TOAST_COLOR)
     } catch {
       setStatus(null)
-      toast.error(t('panel.syncExportFailed'), null, { color: SYNC_TOAST_COLOR })
+      toast.error(t('panel.syncExportFailed'), SYNC_TOAST_COLOR)
     }
   }
 

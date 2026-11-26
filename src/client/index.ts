@@ -6,7 +6,6 @@ import type {} from '@deepseek-ai/dsh-client-ui-settings/client'
 import type {} from '@deepseek-ai/dsh-client-ui-session/client'
 import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
 import { bindTheme } from './shared/theme.ts'
-import { bindInputSettings } from './shared/settings.ts'
 import { bindStorage } from './library/storage.ts'
 import { toast } from './ui/toast.tsx'
 import { NS, zh, en } from './locales.ts'
@@ -26,7 +25,6 @@ export function apply(ctx: Context): void {
   ctx.effect(() => ctx.locale.register(NS, { zh, en }), 'dsh-prompt-library: locale')
   const onUnsaved = (): void => { toast.warning(ctx.locale.bind(NS)('panel.sessionOnly')) }
   bindStorage(ctx, onUnsaved)
-  bindInputSettings(ctx, onUnsaved)
   ctx.slots.inject('conversation.input.left', () => ctx.slots.register({
     name: 'conversation.input.left', id: 'dsh-prompt-library', locale: NS,
   }, PromptButton))

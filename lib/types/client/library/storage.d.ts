@@ -7,13 +7,11 @@ export interface Prompt {
 }
 interface Library {
     readonly prompts: readonly Prompt[];
-    readonly promptButtonEnabled: boolean;
 }
 export declare function bindStorage(ctx: Context, onUnsaved?: () => void): void;
 export declare const promptsStore: {
     get: () => Library;
     subscribe: (listener: () => void) => (() => void);
-    setButtonEnabled(promptButtonEnabled: boolean): void;
     add(name: string, content: string): void;
     update(id: string, fields: Pick<Prompt, "name" | "content">): void;
     remove(id: string): void;

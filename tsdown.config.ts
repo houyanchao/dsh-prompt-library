@@ -97,7 +97,8 @@ const client: UserConfig = {
         },
       })
       const classMap: Record<string, string> = {}
-      for (const [local, exp] of Object.entries(cssExports ?? {})) classMap[local] = exp.name
+      const classes = cssExports ?? {}
+      for (const local of Object.keys(classes).sort()) classMap[local] = classes[local].name
       return [
         `const css = ${JSON.stringify(code.toString())};`,
         `const tagId = ${JSON.stringify(`${PLUGIN_ID}/${basename(fileId)}`)};`,

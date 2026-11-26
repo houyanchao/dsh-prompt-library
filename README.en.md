@@ -6,17 +6,16 @@ Save reusable instructions in DeepSeek Harness. Open the lightning button next t
 
 ## Usage
 
-- Click the lightning button to open the library. Click **+** or **Add Prompt** to open the manager, where you can add, edit, delete, pin and reorder prompts.
+- The lightning button is always visible next to the composer. Click it to open the library, then click **+** or **Add Prompt** to open the manager, where you can add, edit, delete, pin and reorder prompts.
 - Pinned prompts appear first. When you have five or more prompts, a search field filters the list by title or content.
 - Click a prompt to append it after your draft, separated by a blank line. The composer regains focus with the caret at the end.
-- The **Settings** tab includes preserving your reading position after sending and an optional Enter-key mode. Choose double Enter, Ctrl/⌘ + Enter or Shift + Enter to send.
-- You can hide the lightning button in the manager and reopen it from DSH **Settings → General → Prompt Library**.
+- You can also open the manager from DSH **Settings → General → Prompt Library**.
 
 ## Storage and migration
 
-On first activation, the plugin copies the prompts, order, pins and relevant input preferences from timeline on the same DSH origin and browser profile. It then saves changes independently and shares library changes across tabs on that origin. The **Data Sync** tab exports prompts and input preferences to a JSON backup and restores prompt libraries from this plugin or timeline. Merge matches prompts by ID. Overwrite replaces the list.
+If the plugin has no saved library on first use, it copies prompts from timeline on the same DSH origin and browser profile, preserving their order and pins. The two plugins then save their libraries independently. Changes to this library appear in other tabs on the same origin.
 
-If you keep timeline enabled alongside this plugin, disable its prompt button, smart Enter and reading-position protection wherever you use the standalone equivalents. If you hid timeline’s button before migration, use DSH **Settings → General → Prompt Library** to enable the standalone button.
+Use **Prompt Backup** in the manager to export your prompts as JSON or import a backup from this plugin or timeline, including older backups. **Merge** updates prompts with matching IDs and keeps other existing prompts. **Overwrite** replaces the current list with the list in the backup.
 
 ## Install from GitHub
 
@@ -39,7 +38,11 @@ dsh plugin --profile web add "$PWD/dsh-prompt-library-0.1.0.tgz"
 dsh web
 ```
 
-Use `npm run typecheck` for TypeScript checks and `npm run watch` to rebuild while editing.
+Use `npm test` to check prompt storage compatibility, `npm run typecheck` for TypeScript checks and `npm run watch` to rebuild while editing.
+
+## Feedback and support
+
+Report a bug or suggest a feature on [GitHub Issues](https://github.com/houyanchao/dsh-prompt-library/issues). If the prompt library helps you, you can star the [project on GitHub](https://github.com/houyanchao/dsh-prompt-library).
 
 ## License
 

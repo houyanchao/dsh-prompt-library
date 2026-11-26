@@ -7,31 +7,27 @@ import { detectDarkTheme, observeTheme } from '../shared/theme.ts'
 import { ToastHost, toast } from '../ui/toast.tsx'
 import { TooltipHost, tooltip } from '../ui/tooltip.tsx'
 import { PopconfirmHost, popconfirm } from '../ui/popconfirm.tsx'
-import { DropdownHost, dropdown } from '../ui/dropdown.tsx'
 import { libraryPanel } from './panel.ts'
 import { PromptTab } from './PromptManager.tsx'
-import { SmartInputTab } from './InputSettings.tsx'
-import { DataSyncTab } from './Backup.tsx'
+import { PromptBackupTab } from './Backup.tsx'
 import css from './panel.module.css'
 import ui from '../ui/ui.module.css'
 
 const tabs = [
   ['prompts', 'panel.tabPrompt'],
-  ['input', 'panel.tabSmartInput'],
-  ['backup', 'panel.tabDataSync'],
+  ['backup', 'panel.tabBackup'],
 ] as const
 
 export function SettingsEntry({ t }: PropsLocale<typeof NS>) {
   return <div className={css.generalRow}>
     <span>{t('prompt.tooltipLibrary')}</span>
-    <button type="button" onClick={() => libraryPanel.set('prompts')}>{t('prompt.settings')}</button>
+    <button type="button" onClick={() => libraryPanel.set('prompts')}>{t('prompt.manage')}</button>
   </div>
 }
 
 function dismiss(): void {
-  tooltip.forceHideAll()
-  dropdown.forceHideAll()
-  popconfirm.hide(false)
+  tooltip.hide(true)
+  popconfirm.cancel()
   libraryPanel.set(null)
 }
 
@@ -74,15 +70,13 @@ export function PanelHost({ t, useSessions }: PropsRuntime<'shell.overlay'> & Pr
             <div className={css.header}><h2 className={css.title}>{t(tabs.find(([id]) => id === activeTab)![1])}</h2></div>
             <div className={css.content}>
               {activeTab === 'prompts' && <PromptTab t={t} />}
-              {activeTab === 'input' && <SmartInputTab t={t} />}
-              {activeTab === 'backup' && <DataSyncTab t={t} />}
+              {activeTab === 'backup' && <PromptBackupTab t={t} />}
             </div>
           </div>
         </div>
       </div>}
       <ToastHost dark={dark} />
-      <DropdownHost dark={dark} />
-      <PopconfirmHost defaultConfirmText={t('common.confirm')} defaultCancelText={t('common.cancel')} />
+      <PopconfirmHost />
       <TooltipHost dark={dark} />
     </div>,
     document.body,

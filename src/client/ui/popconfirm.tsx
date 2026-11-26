@@ -1,20 +1,11 @@
-/**
- * 全局确认弹窗：移植原扩展 GlobalPopconfirmManager。
- * title + content + 取消/确认双按钮，确认键四种变体（danger 默认/primary/
- * success/default），点击遮罩外部与 ESC 取消，Promise<boolean> 返回。
- */
 import { useEffect, useState, useSyncExternalStore } from 'react'
 import { Bus } from './bus.ts'
 import css from './ui.module.css'
 
-/** show 配置（与原版对齐；按钮文案未传时由宿主用词典默认值补齐）。 */
-export interface PopconfirmOptions {
-  readonly title?: string
-  readonly content?: string
-  readonly confirmText?: string
-  readonly cancelText?: string
-  readonly confirmTextType?: 'danger' | 'primary' | 'success' | 'default'
-  readonly showCancel?: boolean
+interface PopconfirmOptions {
+  readonly title: string
+  readonly confirmText: string
+  readonly cancelText: string
 }
 
 interface PopconfirmState extends PopconfirmOptions {
@@ -27,46 +18,26 @@ const bus = new Bus<PopconfirmState | null>(null)
 function close(result: boolean): void {
   const current = bus.get()
   if (current === null || current.closing) return
-  bus.set({ ...current, closing: true })
+  const closing = { ...current, closing: true }
+  bus.set(closing)
   current.resolve(result)
   setTimeout(() => {
-    if (bus.get()?.closing === true) bus.set(null)
+    if (bus.get() === closing) bus.set(null)
   }, 200)
 }
 
-/** 命令式 Popconfirm API（等价原 window.globalPopconfirmManager）。 */
 export const popconfirm = {
   show(options: PopconfirmOptions): Promise<boolean> {
     return new Promise((resolve) => {
       const current = bus.get()
       if (current !== null && !current.closing) close(false)
-      if ((options.title ?? '') === '' && (options.content ?? '') === '') {
-        resolve(false)
-        return
-      }
       bus.set({ ...options, resolve, closing: false })
     })
   },
-  hide(result = false): void { close(result) },
+  cancel(): void { close(false) },
 }
 
-/** 确认键变体 → 类名。 */
-const CONFIRM_CLASS = {
-  danger: css.popconfirmBtnDanger,
-  primary: css.popconfirmBtnPrimary,
-  success: css.popconfirmBtnSuccess,
-  default: css.popconfirmBtnDefault,
-} as const
-
-/**
- * Popconfirm 宿主。
- * @param props - 词典默认按钮文案。
- * @returns 遮罩 + 弹窗。
- */
-export function PopconfirmHost({ defaultConfirmText, defaultCancelText }: {
-  readonly defaultConfirmText: string
-  readonly defaultCancelText: string
-}) {
+export function PopconfirmHost() {
   const state = useSyncExternalStore(bus.subscribe, () => bus.get())
 
   // 进入动画：挂载后下一帧再加 visible 类（原版 requestAnimationFrame 淡入 + scale 弹入）。
@@ -101,26 +72,21 @@ export function PopconfirmHost({ defaultConfirmText, defaultCancelText }: {
     >
       <div className={css.popconfirm} role="alertdialog" aria-modal="true">
         <div className={css.popconfirmContent}>
-          {(state.title ?? '') !== '' ? <div className={css.popconfirmTitle}>{state.title}</div> : null}
-          {(state.content ?? '') !== '' ? <div className={css.popconfirmText}>{state.content}</div> : null}
+          <div className={css.popconfirmTitle}>{state.title}</div>
           <div className={css.popconfirmActions}>
-            {state.showCancel !== false
-              ? (
-                <button
-                  type="button"
-                  className={`${css.popconfirmBtn} ${css.popconfirmBtnCancel}`}
-                  onClick={(e) => { e.stopPropagation(); close(false) }}
-                >
-                  {state.cancelText ?? defaultCancelText}
-                </button>
-              )
-              : null}
             <button
               type="button"
-              className={`${css.popconfirmBtn} ${CONFIRM_CLASS[state.confirmTextType ?? 'danger']}`}
+              className={`${css.popconfirmBtn} ${css.popconfirmBtnCancel}`}
+              onClick={(e) => { e.stopPropagation(); close(false) }}
+            >
+              {state.cancelText}
+            </button>
+            <button
+              type="button"
+              className={`${css.popconfirmBtn} ${css.popconfirmBtnDanger}`}
               onClick={(e) => { e.stopPropagation(); close(true) }}
             >
-              {state.confirmText ?? defaultConfirmText}
+              {state.confirmText}
             </button>
           </div>
         </div>

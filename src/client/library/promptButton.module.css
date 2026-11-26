@@ -1,5 +1,5 @@
 /* ============================================
-   智能输入框：提示词按钮 + 提示词下拉面板
+   提示词按钮与下拉面板
    （移植原 prompt-button.css + panelModal/tabs/prompt/styles.css 下拉部分）
    ============================================ */
 
@@ -7,7 +7,6 @@
    坐在 composer 工具行，与宿主「命令」按钮（InputBar.module.css 的 .add）同款：
    28px 圆形、宿主 token 配色，深浅主题由 token 自身切换，不再自带调色板 ==== */
 .promptBtn {
-  position: relative;
   display: grid;
   place-items: center;
   flex: none;
@@ -36,18 +35,6 @@
   width: 14px;
   height: 14px;
   flex-shrink: 0;
-}
-
-.updateDot {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 8px;
-  height: 8px;
-  box-sizing: border-box;
-  border: 1px solid var(--dsw-specific-selector);
-  border-radius: 50%;
-  background: #ef4444;
 }
 
 /* ==== 遮罩层
@@ -103,195 +90,57 @@
     0 16px 48px rgba(0, 0, 0, 0.24);
 }
 
-/* ==== 顶部 Tab ==== */
-.tabs {
+/* ==== 标题与管理入口 ==== */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  padding: 6px 10px 0;
-  background: #ffffff;
+  min-height: 44px;
+  padding: 0 12px;
   border-bottom: 1px solid #e5e7eb;
-}
-
-.container[data-theme='dark'] .tabs {
-  background: #262626;
-  border-bottom-color: #404040;
-}
-
-.tabGroup {
-  flex: 1;
-  display: flex;
-  gap: 14px;
-  min-width: 0;
-}
-
-.tab {
-  position: relative;
-  flex: 0 1 auto;
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  height: 38px;
-  padding: 0 2px;
-  border: none;
-  border-radius: 0;
-  background: transparent;
-  color: #6b7280;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: color 0.15s ease;
-}
-
-.tabText {
-  position: relative;
-  min-width: 0;
-  overflow: visible;
-  white-space: nowrap;
-}
-
-.tabLabel {
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-
-
-.tabText::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -12px;
-  height: 3px;
-  border-radius: 999px;
-  background: transparent;
-  transform: scaleX(0.35);
-  opacity: 0;
-  transition: transform 0.18s ease, opacity 0.18s ease, background 0.18s ease;
-}
-
-.tab:hover {
-  color: #4c1d95;
-}
-
-.tab.tabActive {
   color: #5b21b6;
-  font-weight: 600;
 }
 
-.tab.tabActive .tabText::after {
-  background: #7c3aed;
-  opacity: 1;
-  transform: scaleX(1);
-}
-
-.container[data-theme='dark'] .tab {
-  color: #a3a3a3;
-}
-
-.container[data-theme='dark'] .tab:hover,
-.container[data-theme='dark'] .tab.tabActive {
+.container[data-theme='dark'] .header {
+  border-bottom-color: #404040;
   color: #c4b5fd;
 }
 
-.container[data-theme='dark'] .tab.tabActive .tabText::after {
-  background: #8b5cf6;
+.title {
+  font-size: 13px;
+  font-weight: 600;
 }
 
-.tabIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-  border-radius: 5px;
-  color: currentColor;
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
-}
-
-.tabIcon:hover {
-  background: rgba(124, 58, 237, 0.12);
-  color: #5b21b6;
-}
-
-.tabIcon:active {
-  transform: scale(0.96);
-}
-
-.tabIcon svg {
-  width: 13px;
-  height: 13px;
-}
-
-.container[data-theme='dark'] .tabIcon:hover {
-  background: rgba(139, 92, 246, 0.18);
-  color: #ddd6fe;
-}
-
-/* 分享插件按钮（tabs 右端） */
-.headerActions {
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  gap: 6px;
-  margin-left: 4px;
-}
-
-.shareBtn {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.manageButton {
+  display: grid;
+  place-items: center;
   width: 28px;
   height: 28px;
   padding: 0;
   border: none;
-  border-radius: 7px;
+  border-radius: 5px;
   background: transparent;
-  color: #6b7280;
+  color: inherit;
   cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
 }
 
-.shareBtn:hover {
+.manageButton svg {
+  width: 13px;
+  height: 13px;
+}
+
+.manageButton:hover {
   background: rgba(124, 58, 237, 0.12);
-  color: #5b21b6;
 }
 
-.shareBtn:active {
-  transform: scale(0.96);
-}
-
-.shareBtn svg {
-  width: 16px;
-  height: 16px;
-}
-
-.container[data-theme='dark'] .shareBtn {
-  color: #a3a3a3;
-}
-
-.container[data-theme='dark'] .shareBtn:hover {
+.container[data-theme='dark'] .manageButton:hover {
   background: rgba(139, 92, 246, 0.18);
-  color: #ddd6fe;
 }
 
-/* ==== 面板切换 ==== */
-.panel {
-  display: none;
-  flex: 1;
-  min-height: 0;
-  flex-direction: column;
-}
-
-.panel.panelActive {
-  display: flex;
+.manageButton:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
 }
 
 /* ==== 搜索 ==== */
@@ -537,175 +386,4 @@
 
 .container[data-theme='dark'] .emptyAction:hover {
   background: #e5e5e5;
-}
-
-/* ==== 常用设置 ==== */
-.commonSettings {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  overflow-y: auto;
-  padding: 10px;
-}
-
-.commonSettings::-webkit-scrollbar {
-  width: 6px;
-}
-
-.commonSettings::-webkit-scrollbar-thumb {
-  background: #e0e0e0;
-  border-radius: 3px;
-}
-
-.container[data-theme='dark'] .commonSettings::-webkit-scrollbar-thumb {
-  background: #525252;
-}
-
-.settingItem {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px;
-  border: 1px solid #f0f0f0;
-  border-radius: 10px;
-  background: #ffffff;
-}
-
-.container[data-theme='dark'] .settingItem {
-  background: #1f1f1f;
-  border-color: #3f3f46;
-}
-
-.container[data-theme='dark'] .settingItem:hover {
-  border-color: #52525b;
-  background: #27272a;
-}
-
-.settingInfo {
-  flex: 1;
-  min-width: 0;
-}
-
-.settingTitleRow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.settingLabel {
-  color: #1f2937;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.container[data-theme='dark'] .settingLabel {
-  color: #f5f5f5;
-}
-
-.settingHint {
-  margin-top: 5px;
-  color: #6b7280;
-  font-size: 12px;
-  line-height: 1.4;
-}
-
-.container[data-theme='dark'] .settingHint {
-  color: #a3a3a3;
-}
-
-.settingBtn {
-  flex-shrink: 0;
-  height: 30px;
-  padding: 0 12px;
-  border: none;
-  border-radius: 8px;
-  background: #111827;
-  color: #ffffff;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.15s ease, transform 0.15s ease;
-}
-
-.settingBtn:hover {
-  background: #374151;
-}
-
-.settingBtn:active {
-  transform: scale(0.97);
-}
-
-.container[data-theme='dark'] .settingBtn {
-  background: #f5f5f5;
-  color: #171717;
-}
-
-.container[data-theme='dark'] .settingBtn:hover {
-  background: #e5e5e5;
-}
-
-/* ==== 开关（原 .ait-toggle-switch） ==== */
-.toggleSwitch {
-  position: relative;
-  display: inline-block;
-  width: 48px;
-  height: 26px;
-  flex-shrink: 0;
-}
-
-.toggleSwitch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.toggleSlider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #d1d5db;
-  border-radius: 999px;
-  transition: background-color 0.3s;
-}
-
-.toggleSlider::before {
-  position: absolute;
-  content: "";
-  height: 20px;
-  width: 20px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  border-radius: 50%;
-  transition: transform 0.3s;
-}
-
-.toggleSwitch input:checked + .toggleSlider {
-  background-color: #000000;
-}
-
-.toggleSwitch input:checked + .toggleSlider::before {
-  transform: translateX(22px);
-}
-
-.toggleSwitch input:focus + .toggleSlider {
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
-}
-
-.container[data-theme='dark'] .toggleSlider {
-  background-color: #525252;
-}
-
-.container[data-theme='dark'] .toggleSwitch input:checked + .toggleSlider {
-  background-color: #8b5cf6;
-}
-
-.container[data-theme='dark'] .toggleSwitch input:focus + .toggleSlider {
-  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.24);
 }

@@ -1,5 +1,4 @@
 import type { Context } from '@deepseek-ai/cordis'
-import { parseInputSettings, settingsStore, type InputSettings } from '../shared/settings.ts'
 import { Bus } from '../ui/bus.ts'
 
 export interface Prompt {
@@ -11,25 +10,19 @@ export interface Prompt {
 
 interface Library {
   readonly prompts: readonly Prompt[]
-  readonly promptButtonEnabled: boolean
 }
 
 const KEY = 'dsh.prompt-library.v1'
 const LEGACY_PROMPTS = 'dsh.timeline.prompts'
-const LEGACY_SETTINGS = 'dsh.timeline.settings'
-const EMPTY: Library = { prompts: [], promptButtonEnabled: true }
+const EMPTY: Library = { prompts: [] }
 const bus = new Bus<Library>(EMPTY)
 let unsaved = false
 let reportUnsaved: () => void = () => {}
 
-function persist(value: Library): void {
-  try {
-    localStorage.setItem(KEY, JSON.stringify(value))
-    unsaved = false
-  } catch {
-    if (!unsaved) reportUnsaved()
-    unsaved = true
-  }
+// The v1 reader rejects the entire prompt list without this boolean.
+let diskButtonEnabled = true
+function writeLibrary(value: Library): void {
+  localStorage.setItem(KEY, JSON.stringify({ prompts: value.prompts, promptButtonEnabled: diskButtonEnabled }))
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -43,7 +36,6 @@ function isPrompt(value: unknown): value is Prompt {
 
 function isLibrary(value: unknown): value is Library {
   return isRecord(value) && Array.isArray(value.prompts) && value.prompts.every(isPrompt)
-    && typeof value.promptButtonEnabled === 'boolean'
 }
 
 function readJson(key: string): unknown {
@@ -51,33 +43,36 @@ function readJson(key: string): unknown {
   return raw === null ? undefined : JSON.parse(raw)
 }
 
-function load(): Library {
+function load(initialize = false): Library {
   if (unsaved) return bus.get()
   const value = readJson(KEY)
-  if (value !== undefined) return isLibrary(value) ? value : bus.get()
+  if (value !== undefined) {
+    if (!isLibrary(value)) return bus.get()
+    diskButtonEnabled = !('promptButtonEnabled' in value) || value.promptButtonEnabled !== false
+    return { prompts: value.prompts }
+  }
   let prompts: readonly Prompt[] = []
-  let enabled = true
   try {
     const oldPrompts = readJson(LEGACY_PROMPTS)
     if (Array.isArray(oldPrompts)) prompts = oldPrompts.filter(isPrompt)
-  } catch { /* A malformed list must not invalidate the separate preference. */ }
-  try {
-    const settings = readJson(LEGACY_SETTINGS)
-    if (isRecord(settings) && typeof settings.promptButtonEnabled === 'boolean') enabled = settings.promptButtonEnabled
-  } catch { /* Keep the default visibility. */ }
-  const migrated = { prompts, promptButtonEnabled: enabled }
-  persist(migrated)
+  } catch { /* A malformed legacy list starts as an empty library. */ }
+  diskButtonEnabled = true
+  const migrated = { prompts }
+  if (initialize) {
+    // A failed initial copy has no local edits to protect from other tabs.
+    try { writeLibrary(migrated) } catch { reportUnsaved() }
+  }
   return migrated
 }
 
-function reload(): void {
-  try { bus.set(load()) } catch { /* Keep the last usable snapshot. */ }
+function reload(initialize = false): void {
+  try { bus.set(load(initialize)) } catch { /* Keep the last usable snapshot. */ }
 }
 
 export function bindStorage(ctx: Context, onUnsaved: () => void = () => {}): void {
   ctx.effect(() => {
     reportUnsaved = onUnsaved
-    reload()
+    reload(true)
     const refresh = (event: StorageEvent): void => {
       if (event.storageArea === localStorage && (event.key === null || event.key === KEY)) reload()
     }
@@ -89,24 +84,23 @@ export function bindStorage(ctx: Context, onUnsaved: () => void = () => {}): voi
   }, 'dsh-prompt-library: storage')
 }
 
-function update(transform: (previous: Library) => Library): void {
+function changeList(transform: (previous: readonly Prompt[]) => readonly Prompt[]): void {
   let current = bus.get()
   try { current = load() } catch { /* Storage may be unavailable. */ }
-  const next = transform(current)
-  persist(next)
+  const next = { prompts: transform(current.prompts) }
+  try {
+    writeLibrary(next)
+    unsaved = false
+  } catch {
+    if (!unsaved) reportUnsaved()
+    unsaved = true
+  }
   bus.set(next)
-}
-
-function changeList(transform: (prompts: readonly Prompt[]) => readonly Prompt[]): void {
-  update(previous => ({ ...previous, prompts: transform(previous.prompts) }))
 }
 
 export const promptsStore = {
   get: (): Library => bus.get(),
   subscribe: bus.subscribe,
-  setButtonEnabled(promptButtonEnabled: boolean): void {
-    update(previous => ({ ...previous, promptButtonEnabled }))
-  },
   add(name: string, content: string): void {
     const id = `prompt_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`
     changeList(list => [...list, { id, name, content }])
@@ -142,7 +136,7 @@ export function sortPrompts(prompts: readonly Prompt[]): readonly Prompt[] {
 }
 
 export function exportBackup(): void {
-  const backup = { _meta: { source: 'dsh-prompt-library', version: 1 }, data: { ...bus.get(), inputSettings: settingsStore.get() } }
+  const backup = { _meta: { source: 'dsh-prompt-library', version: 2 }, data: { prompts: bus.get().prompts } }
   const url = URL.createObjectURL(new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' }))
   const link = document.createElement('a')
   link.href = url
@@ -155,27 +149,19 @@ export function restoreBackup(value: unknown, mode: 'merge' | 'overwrite'): void
   if (!isRecord(value) || !isRecord(value.data)) throw new Error('Invalid backup')
   const source = isRecord(value._meta) ? value._meta.source : undefined
   let prompts: readonly Prompt[]
-  let enabled: boolean | undefined
-  let inputSettings: Partial<InputSettings> | undefined
   if (source === 'dsh-prompt-library' && isLibrary(value.data)) {
     prompts = value.data.prompts
-    enabled = value.data.promptButtonEnabled
-    if ('inputSettings' in value.data) inputSettings = parseInputSettings(value.data.inputSettings)
   } else if (source === 'AIChatTimeline-DSH' || source === undefined) {
     const legacy = value.data[LEGACY_PROMPTS]
     if (!Array.isArray(legacy) || !legacy.every(isPrompt)) throw new Error('Invalid prompt list')
     prompts = legacy
-    const settings = value.data[LEGACY_SETTINGS]
-    if (settings !== undefined) inputSettings = parseInputSettings(settings)
-    if (isRecord(settings) && typeof settings.promptButtonEnabled === 'boolean') enabled = settings.promptButtonEnabled
   } else {
     throw new Error('Invalid backup')
   }
-  update(previous => {
+  changeList(previous => {
     const entries = new Map<string, Prompt>()
-    if (mode === 'merge') for (const prompt of previous.prompts) entries.set(prompt.id, prompt)
+    if (mode === 'merge') for (const prompt of previous) entries.set(prompt.id, prompt)
     for (const prompt of prompts) entries.set(prompt.id, prompt)
-    return { prompts: [...entries.values()], promptButtonEnabled: enabled ?? previous.promptButtonEnabled }
+    return [...entries.values()]
   })
-  if (inputSettings !== undefined) settingsStore.set(inputSettings)
 }
