@@ -1,4 +1,5 @@
 import type { Context } from '@deepseek-ai/cordis'
+import { whenTimelineInactive } from './whenTimelineInactive.ts'
 import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
 import type {} from '@deepseek-ai/dsh-client-locale/client'
 import type {} from '@deepseek-ai/dsh-client-ui-layout/client'
@@ -9,7 +10,7 @@ import { bindTheme } from './shared/theme.ts'
 import { bindStorage } from './library/storage.ts'
 import { toast } from './ui/toast.tsx'
 import { NS, zh, en } from './locales.ts'
-import { PanelHost, SettingsEntry } from './library/PanelHost.tsx'
+import { clearPromptUi, PanelHost, SettingsEntry } from './library/PanelHost.tsx'
 import { PromptButton } from './library/PromptButton.tsx'
 
 declare module '@deepseek-ai/dsh-client-ui-slots' {
@@ -21,10 +22,15 @@ declare module '@deepseek-ai/dsh-client-ui-slots' {
 export const inject = ['slots', 'locale', 'theme']
 
 export function apply(ctx: Context): void {
+  whenTimelineInactive(ctx, { name: 'dsh-prompt-library', inject, apply: activate })
+}
+
+function activate(ctx: Context): void {
   bindTheme(ctx)
   ctx.effect(() => ctx.locale.register(NS, { zh, en }), 'dsh-prompt-library: locale')
   const onUnsaved = (): void => { toast.warning(ctx.locale.bind(NS)('panel.sessionOnly')) }
   bindStorage(ctx, onUnsaved)
+  ctx.effect(() => clearPromptUi, 'dsh-prompt-library: dismiss prompt UI')
   ctx.slots.inject('conversation.input.left', () => ctx.slots.register({
     name: 'conversation.input.left', id: 'dsh-prompt-library', locale: NS,
   }, PromptButton))

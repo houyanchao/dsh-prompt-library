@@ -34,7 +34,12 @@ export const popconfirm = {
       bus.set({ ...options, resolve, closing: false })
     })
   },
-  cancel(): void { close(false) },
+  cancel(): void {
+    const current = bus.get()
+    if (current === null) return
+    bus.set(null)
+    if (!current.closing) current.resolve(false)
+  },
 }
 
 export function PopconfirmHost() {

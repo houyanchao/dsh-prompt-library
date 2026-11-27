@@ -88,10 +88,12 @@ export function PromptButton({ useInput, inputActions, t }: PromptButtonProps) {
   const [open, setOpen] = useState(false)
   const btnRef = useRef<HTMLButtonElement>(null)
   const markerRef = useRef<HTMLSpanElement>(null)
+  const focusTimer = useRef<ReturnType<typeof setTimeout>>()
   const draftRef = useRef(draft)
   draftRef.current = draft
 
   const seat = useCommandSideSeat(markerRef)
+  useLayoutEffect(() => () => clearTimeout(focusTimer.current), [])
 
   const insertPrompt = (prompt: Prompt): void => {
     if (prompt.content === '') return
@@ -99,7 +101,8 @@ export function PromptButton({ useInput, inputActions, t }: PromptButtonProps) {
     while (composer !== null && !composer.querySelector('[data-input-scroll]')) composer = composer.parentElement
     const scroll = composer?.querySelector('[data-input-scroll]') ?? null
     inputActions.setDraft(appendPromptText(draftRef.current, prompt.content))
-    setTimeout(() => {
+    clearTimeout(focusTimer.current)
+    focusTimer.current = setTimeout(() => {
       const input = scroll?.querySelector<HTMLElement>('textarea, [contenteditable="true"]')
       if (!input?.isConnected) return
       input.focus()

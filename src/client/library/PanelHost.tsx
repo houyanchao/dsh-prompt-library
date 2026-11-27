@@ -31,15 +31,17 @@ function dismiss(): void {
   libraryPanel.set(null)
 }
 
+export function clearPromptUi(): void {
+  dismiss()
+  toast.forceHideAll()
+}
+
 export function PanelHost({ t, useSessions }: PropsRuntime<'shell.overlay'> & PropsLocale<typeof NS>) {
   const session = useSessions(selectCurrentSessionId)
   const activeTab = useSyncExternalStore(libraryPanel.subscribe, () => libraryPanel.get())
   const dark = useSyncExternalStore(observeTheme, detectDarkTheme)
   const open = activeTab !== null
-  useEffect(() => () => {
-    dismiss()
-    toast.forceHideAll()
-  }, [session])
+  useEffect(() => clearPromptUi, [session])
   useEffect(() => {
     if (!open) return
     const prev = document.body.style.overflow

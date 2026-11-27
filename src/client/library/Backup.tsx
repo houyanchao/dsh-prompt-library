@@ -33,22 +33,25 @@ export function PromptBackupTab({ t }: { readonly t: T }) {
 
   /** 导入数据（原 handleImport）。 */
   const handleImport = async (e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
-    const file = e.target.files?.[0]
+    const input = e.currentTarget
+    const file = input.files?.[0]
     if (file === undefined) return
 
     // 重置 input，允许重复选择同一文件。
-    e.target.value = ''
+    input.value = ''
 
     try {
       setStatus({ type: 'loading', message: t('panel.syncImporting') })
 
       const text = await file.text()
+      if (fileInputRef.current !== input) return
       const importData: unknown = JSON.parse(text)
 
       restoreBackup(importData, importMode)
       setStatus(null)
       toast.success(t('panel.syncImportSuccess'))
     } catch (error) {
+      if (fileInputRef.current !== input) return
       const message = error instanceof Error ? error.message : String(error)
       setStatus({ type: 'error', message: `${t('panel.syncImportFailed')}: ${message}` })
     }

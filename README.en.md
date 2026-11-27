@@ -4,6 +4,8 @@
 
 Save reusable instructions in DeepSeek Harness. Open the lightning button next to the composer to append a saved prompt to your draft. You can edit the draft before sending it. This DSH plugin was extracted from [dsh-timeline](https://github.com/houyanchao/dsh-timeline).
 
+While dsh-timeline is running, Timeline provides the prompt controls and this plugin pauses. Disabling or uninstalling Timeline automatically restores this plugin with its own saved prompts.
+
 ## Usage
 
 - The lightning button is always visible next to the composer. Click it to open the library, then click **+** or **Add Prompt** to open the manager, where you can add, edit, delete, pin and reorder prompts.
