@@ -30,15 +30,22 @@
 
 ## 📦 安装
 
-安装 DSH CLI 和 pnpm 后，从本项目的 GitHub 仓库安装并启动 DSH Web。
+### 安装方式 1（客户端）
 
-```bash
-dsh plugin --profile web add https://github.com/houyanchao/dsh-prompt-library/archive/refs/heads/main.tar.gz
-dsh web
+在 [DeepSeek Harness](https://www.deepseek.com/harness/) 客户端打开「插件」→「添加插件」，粘贴下面的仓库地址，点击「安装」。
+
+```text
+https://github.com/houyanchao/dsh-prompt-library
 ```
 
-> [!TIP]
-> 如果你从源码运行 DSH，请在 DSH 源码仓库根目录执行上面的命令，并将开头的 `dsh` 换成 `pnpm dsh`。
+![DeepSeek Harness 客户端中的「插件」页面、「添加插件」按钮和输入框](./docs/install-client.png)
+
+### 安装方式 2（通过命令行从 GitHub 安装）
+
+```bash
+# 安装 dsh-prompt-library 插件
+dsh plugin --profile web add https://github.com/houyanchao/dsh-prompt-library/archive/refs/heads/main.tar.gz
+```
 
 ## 🔄 从 dsh-timeline 迁移
 
@@ -46,9 +53,11 @@ dsh web
 
 独立插件首次启用且尚无自己的数据时，会复制当前浏览器中同一 DSH 地址下的 Timeline 提示词，保留原有顺序和置顶状态。此后两个库独立保存。同一浏览器中打开相同 DSH 地址的其他标签页，会同步显示独立提示词库的更改。
 
-## ⭐ 反馈与支持
+## ⭐ 支持一下
 
-遇到问题或有功能建议，欢迎提交 [GitHub Issue](https://github.com/houyanchao/dsh-prompt-library/issues)。如果这个提示词库帮你省下了反复输入的时间，欢迎给项目点个 [Star](https://github.com/houyanchao/dsh-prompt-library)。
+如果 dsh-prompt-library 好用，欢迎给个🌟，帮助更多人发现它！
+
+遇到问题或有功能建议，欢迎提交 [GitHub Issue](https://github.com/houyanchao/dsh-prompt-library/issues)。
 
 ## 📄 许可证
 

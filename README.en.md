@@ -30,15 +30,22 @@ You can also open the manager from **Settings → General → Prompt Library →
 
 ## 📦 Installation
 
-With the DSH CLI and pnpm installed, run these commands to install the plugin from its GitHub repository and launch DSH Web.
+### Method 1 (desktop client)
 
-```bash
-dsh plugin --profile web add https://github.com/houyanchao/dsh-prompt-library/archive/refs/heads/main.tar.gz
-dsh web
+In the [DeepSeek Harness](https://www.deepseek.com/harness/) client, open **Plugins → Add plugin**, paste the repository URL below, then click **Install**.
+
+```text
+https://github.com/houyanchao/dsh-prompt-library
 ```
 
-> [!TIP]
-> If you run DSH from source, run the commands above from the DSH repository root, replacing the leading `dsh` with `pnpm dsh`.
+![The Plugins page, the Add plugin button and the installation field in the DeepSeek Harness client](./docs/install-client.png)
+
+### Method 2 (install from GitHub with the CLI)
+
+```bash
+# Install dsh-prompt-library
+dsh plugin --profile web add https://github.com/houyanchao/dsh-prompt-library/archive/refs/heads/main.tar.gz
+```
 
 ## 🔄 Migrating from dsh-timeline
 
@@ -46,9 +53,11 @@ The prompt library originated in [dsh-timeline](https://github.com/houyanchao/ds
 
 On first activation, if the standalone plugin has no library of its own, it copies the Timeline prompts saved at the same DSH address in your browser, preserving their order and pins. The two plugins then save their libraries independently. Edits to the standalone library appear in other tabs open to the same DSH address in that browser.
 
-## ⭐ Feedback and support
+## ⭐ Support
 
-Report bugs or suggest a feature on [GitHub Issues](https://github.com/houyanchao/dsh-prompt-library/issues). If the library saves you time, you can give the project a [star on GitHub](https://github.com/houyanchao/dsh-prompt-library).
+If dsh-prompt-library is useful to you, give it a 🌟 to help others discover it!
+
+Report bugs or suggest a feature on [GitHub Issues](https://github.com/houyanchao/dsh-prompt-library/issues).
 
 ## 📄 License
 
