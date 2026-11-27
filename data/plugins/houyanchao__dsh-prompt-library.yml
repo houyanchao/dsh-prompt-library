@@ -1,0 +1,6 @@
+url: https://github.com/houyanchao/dsh-prompt-library
+name: houyanchao/dsh-prompt-library
+category: ui
+description:
+  en: Save, pin and search reusable prompts, then append one to the current draft from the chat input.
+  zh: DSH 提效插件：保存常用提示词，在会话输入框旁选中一条即可追加到当前草稿。
