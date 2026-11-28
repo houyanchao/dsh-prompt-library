@@ -32,19 +32,15 @@ You can also open the manager from **Settings → General → Prompt Library →
 
 ### Method 1 (desktop client)
 
-In the [DeepSeek Harness](https://www.deepseek.com/harness/) client, open **Plugins → Add plugin**, paste the repository URL below, then click **Install**.
-
-```text
-https://github.com/houyanchao/dsh-prompt-box
-```
+In the [DeepSeek Harness](https://www.deepseek.com/harness/) client, open **Plugins → Add plugin**, enter `dsh-prompt-box`, then click **Install**.
 
 ![The Plugins page, the Add plugin button and the installation field in the DeepSeek Harness client](./docs/install-client.png)
 
-### Method 2 (install from GitHub with the CLI)
+### Method 2 (install from npm with the CLI)
 
 ```bash
 # Install dsh-prompt-box
-dsh plugin --profile web add https://github.com/houyanchao/dsh-prompt-box/archive/refs/heads/main.tar.gz
+dsh plugin --profile web add dsh-prompt-box
 ```
 
 ## 🔄 Migrating from dsh-timeline

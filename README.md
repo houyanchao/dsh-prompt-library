@@ -32,19 +32,15 @@
 
 ### 安装方式 1（客户端）
 
-在 [DeepSeek Harness](https://www.deepseek.com/harness/) 客户端打开「插件」→「添加插件」，粘贴下面的仓库地址，点击「安装」。
-
-```text
-https://github.com/houyanchao/dsh-prompt-box
-```
+在 [DeepSeek Harness](https://www.deepseek.com/harness/) 客户端打开「插件」→「添加插件」，输入包名 `dsh-prompt-box`，点击「安装」。
 
 ![DeepSeek Harness 客户端中的「插件」页面、「添加插件」按钮和输入框](./docs/install-client.png)
 
-### 安装方式 2（通过命令行从 GitHub 安装）
+### 安装方式 2（通过命令行从 npm 安装）
 
 ```bash
 # 安装 dsh-prompt-box 插件
-dsh plugin --profile web add https://github.com/houyanchao/dsh-prompt-box/archive/refs/heads/main.tar.gz
+dsh plugin --profile web add dsh-prompt-box
 ```
 
 ## 🔄 从 dsh-timeline 迁移
