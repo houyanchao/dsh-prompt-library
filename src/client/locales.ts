@@ -1,4 +1,4 @@
-export const NS = 'dshPromptLibrary'
+export const NS = 'dshPromptBox'
 
 export const zh = {
   'panel.sessionOnly': '浏览器无法保存到本机，更改仅在本标签页有效。',

@@ -1,6 +1,6 @@
 <div align="center">
 
-# dsh-prompt-library
+# dsh-prompt-box
 
 **A prompt library for [DeepSeek Harness](https://deepseek-harness.github.io/deepseek-harness/)**
 
@@ -8,14 +8,14 @@ Insert prompts into drafts · Pin and search · JSON backups
 
 [![DSH Plugin](https://img.shields.io/badge/DeepSeek%20Harness-plugin-6128FF)](https://deepseek-harness.github.io/deepseek-harness/)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](./LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/houyanchao/dsh-prompt-library/pulls)
-[![GitHub stars](https://img.shields.io/github/stars/houyanchao/dsh-prompt-library?style=social)](https://github.com/houyanchao/dsh-prompt-library)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/houyanchao/dsh-prompt-box/pulls)
+[![GitHub stars](https://img.shields.io/github/stars/houyanchao/dsh-prompt-box?style=social)](https://github.com/houyanchao/dsh-prompt-box)
 
 [简体中文](./README.md) | **English**
 
 </div>
 
-## 📖 What is dsh-prompt-library?
+## 📖 What is dsh-prompt-box?
 
 Save instructions you use often and give each one a name. For example, save “Summarize these meeting notes by topic and list the action items” as **Meeting notes**. Next time, paste your notes into the composer and choose **Meeting notes** from the lightning button beside it. The instruction appears at the end of your draft, ready to edit and send.
 
@@ -35,7 +35,7 @@ You can also open the manager from **Settings → General → Prompt Library →
 In the [DeepSeek Harness](https://www.deepseek.com/harness/) client, open **Plugins → Add plugin**, paste the repository URL below, then click **Install**.
 
 ```text
-https://github.com/houyanchao/dsh-prompt-library
+https://github.com/houyanchao/dsh-prompt-box
 ```
 
 ![The Plugins page, the Add plugin button and the installation field in the DeepSeek Harness client](./docs/install-client.png)
@@ -43,8 +43,8 @@ https://github.com/houyanchao/dsh-prompt-library
 ### Method 2 (install from GitHub with the CLI)
 
 ```bash
-# Install dsh-prompt-library
-dsh plugin --profile web add https://github.com/houyanchao/dsh-prompt-library/archive/refs/heads/main.tar.gz
+# Install dsh-prompt-box
+dsh plugin --profile web add https://github.com/houyanchao/dsh-prompt-box/archive/refs/heads/main.tar.gz
 ```
 
 ## 🔄 Migrating from dsh-timeline
@@ -55,9 +55,9 @@ On first activation, if the standalone plugin has no library of its own, it copi
 
 ## ⭐ Support
 
-If dsh-prompt-library is useful to you, give it a 🌟 to help others discover it!
+If dsh-prompt-box is useful to you, give it a 🌟 to help others discover it!
 
-Report bugs or suggest a feature on [GitHub Issues](https://github.com/houyanchao/dsh-prompt-library/issues).
+Report bugs or suggest a feature on [GitHub Issues](https://github.com/houyanchao/dsh-prompt-box/issues).
 
 ## 📄 License
 

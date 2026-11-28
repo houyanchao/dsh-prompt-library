@@ -1,5 +1,5 @@
 {
-  "name": "dsh-prompt-library",
+  "name": "dsh-prompt-box",
   "version": "1.0.0",
   "description": "提示词库插件，保存、置顶和搜索常用提示词，在对话输入框旁一键插入。",
   "keywords": [
@@ -10,13 +10,13 @@
     "dsh",
     "prompt-library"
   ],
-  "homepage": "https://github.com/houyanchao/dsh-prompt-library#readme",
+  "homepage": "https://github.com/houyanchao/dsh-prompt-box#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/houyanchao/dsh-prompt-library.git"
+    "url": "git+https://github.com/houyanchao/dsh-prompt-box.git"
   },
   "bugs": {
-    "url": "https://github.com/houyanchao/dsh-prompt-library/issues"
+    "url": "https://github.com/houyanchao/dsh-prompt-box/issues"
   },
   "type": "module",
   "main": "lib/index.js",

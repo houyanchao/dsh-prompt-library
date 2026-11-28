@@ -1,5 +1,5 @@
-url: https://github.com/houyanchao/dsh-prompt-library
-name: houyanchao/dsh-prompt-library
+url: https://github.com/houyanchao/dsh-prompt-box
+name: houyanchao/dsh-prompt-box
 category: ui
 description:
   en: Save, pin and search reusable prompts, then append one to the current draft from the chat input.

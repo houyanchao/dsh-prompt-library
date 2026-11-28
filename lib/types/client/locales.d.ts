@@ -1,4 +1,4 @@
-export declare const NS = "dshPromptLibrary";
+export declare const NS = "dshPromptBox";
 export declare const zh: {
     readonly 'panel.sessionOnly': "浏览器无法保存到本机，更改仅在本标签页有效。";
     readonly 'common.cancel': "取消";

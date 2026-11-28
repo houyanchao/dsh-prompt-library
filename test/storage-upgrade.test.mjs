@@ -37,8 +37,16 @@ async function openTab(t, initial, blocked = false) {
     const event = Object.assign(new Event('storage'), { key, storageArea: storage })
     window.dispatchEvent(event)
   }
-  return { disk, storage, store: library.promptsStore, refresh, warnings }
+  return { disk, storage, store: library.promptsStore, restoreBackup: library.restoreBackup, refresh, warnings }
 }
+
+test('backups from before and after the package rename restore into the same library', async t => {
+  const { restoreBackup, store } = await openTab(t, { [key]: { prompts: [prompt('existing')] } })
+  for (const source of ['dsh-prompt-library', 'dsh-prompt-box']) {
+    restoreBackup({ _meta: { source, version: 2 }, data: { prompts: [prompt(source)] } }, 'merge')
+  }
+  assert.deepEqual(names(store.get().prompts), ['existing', 'dsh-prompt-library', 'dsh-prompt-box'])
+})
 
 // The previous client keeps its last valid snapshot when the v1 flag is missing.
 function oldTab(disk) {

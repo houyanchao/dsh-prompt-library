@@ -16,7 +16,7 @@ import type { UserConfig } from 'tsdown'
 const { transform } = createRequire(import.meta.url)('lightningcss') as typeof import('lightningcss')
 
 // 必须与 package.json 的 name 一致：浏览器端按包名匹配 __ModuleLoader__ 注册 id。
-const PLUGIN_ID = 'dsh-prompt-library'
+const PLUGIN_ID = 'dsh-prompt-box'
 
 /**
  * 平台模块表：必须与 deepseekharness packages/client/web/src/platform.ts 的

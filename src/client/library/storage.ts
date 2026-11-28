@@ -81,7 +81,7 @@ export function bindStorage(ctx: Context, onUnsaved: () => void = () => {}): voi
       window.removeEventListener('storage', refresh)
       reportUnsaved = () => {}
     }
-  }, 'dsh-prompt-library: storage')
+  }, 'dsh-prompt-box: storage')
 }
 
 function changeList(transform: (previous: readonly Prompt[]) => readonly Prompt[]): void {
@@ -136,11 +136,11 @@ export function sortPrompts(prompts: readonly Prompt[]): readonly Prompt[] {
 }
 
 export function exportBackup(): void {
-  const backup = { _meta: { source: 'dsh-prompt-library', version: 2 }, data: { prompts: bus.get().prompts } }
+  const backup = { _meta: { source: 'dsh-prompt-box', version: 2 }, data: { prompts: bus.get().prompts } }
   const url = URL.createObjectURL(new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' }))
   const link = document.createElement('a')
   link.href = url
-  link.download = `dsh-prompt-library-${new Date().toISOString().slice(0, 10)}.json`
+  link.download = `dsh-prompt-box-${new Date().toISOString().slice(0, 10)}.json`
   link.click()
   setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
@@ -149,7 +149,7 @@ export function restoreBackup(value: unknown, mode: 'merge' | 'overwrite'): void
   if (!isRecord(value) || !isRecord(value.data)) throw new Error('Invalid backup')
   const source = isRecord(value._meta) ? value._meta.source : undefined
   let prompts: readonly Prompt[]
-  if (source === 'dsh-prompt-library' && isLibrary(value.data)) {
+  if ((source === 'dsh-prompt-box' || source === 'dsh-prompt-library') && isLibrary(value.data)) {
     prompts = value.data.prompts
   } else if (source === 'AIChatTimeline-DSH' || source === undefined) {
     const legacy = value.data[LEGACY_PROMPTS]

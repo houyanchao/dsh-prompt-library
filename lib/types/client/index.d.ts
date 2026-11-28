@@ -2,7 +2,7 @@ import type { Context } from '@deepseek-ai/cordis';
 import { zh } from './locales.ts';
 declare module '@deepseek-ai/dsh-client-ui-slots' {
     interface LocaleNamespaceMap {
-        dshPromptLibrary: keyof typeof zh;
+        dshPromptBox: keyof typeof zh;
     }
 }
 export declare const inject: string[];

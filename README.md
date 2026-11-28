@@ -1,6 +1,6 @@
 <div align="center">
 
-# dsh-prompt-library
+# dsh-prompt-box
 
 **[DeepSeek Harness](https://deepseek-harness.github.io/deepseek-harness/) 提示词库插件**
 
@@ -8,14 +8,14 @@
 
 [![DSH Plugin](https://img.shields.io/badge/DeepSeek%20Harness-plugin-6128FF)](https://deepseek-harness.github.io/deepseek-harness/)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](./LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/houyanchao/dsh-prompt-library/pulls)
-[![GitHub stars](https://img.shields.io/github/stars/houyanchao/dsh-prompt-library?style=social)](https://github.com/houyanchao/dsh-prompt-library)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/houyanchao/dsh-prompt-box/pulls)
+[![GitHub stars](https://img.shields.io/github/stars/houyanchao/dsh-prompt-box?style=social)](https://github.com/houyanchao/dsh-prompt-box)
 
 **简体中文** | [English](./README.en.md)
 
 </div>
 
-## 📖 dsh-prompt-library 是什么？
+## 📖 dsh-prompt-box 是什么？
 
 把反复用到的指令保存成带名称的提示词。例如，把「请按议题整理这份会议记录，并列出待办事项」保存为「会议纪要」。下次把记录贴进会话输入框，点旁边的闪电按钮选中「会议纪要」，就能在草稿末尾补上这段要求，编辑后再发送。
 
@@ -35,7 +35,7 @@
 在 [DeepSeek Harness](https://www.deepseek.com/harness/) 客户端打开「插件」→「添加插件」，粘贴下面的仓库地址，点击「安装」。
 
 ```text
-https://github.com/houyanchao/dsh-prompt-library
+https://github.com/houyanchao/dsh-prompt-box
 ```
 
 ![DeepSeek Harness 客户端中的「插件」页面、「添加插件」按钮和输入框](./docs/install-client.png)
@@ -43,8 +43,8 @@ https://github.com/houyanchao/dsh-prompt-library
 ### 安装方式 2（通过命令行从 GitHub 安装）
 
 ```bash
-# 安装 dsh-prompt-library 插件
-dsh plugin --profile web add https://github.com/houyanchao/dsh-prompt-library/archive/refs/heads/main.tar.gz
+# 安装 dsh-prompt-box 插件
+dsh plugin --profile web add https://github.com/houyanchao/dsh-prompt-box/archive/refs/heads/main.tar.gz
 ```
 
 ## 🔄 从 dsh-timeline 迁移
@@ -55,9 +55,9 @@ dsh plugin --profile web add https://github.com/houyanchao/dsh-prompt-library/ar
 
 ## ⭐ 支持一下
 
-如果 dsh-prompt-library 好用，欢迎给个🌟，帮助更多人发现它！
+如果 dsh-prompt-box 好用，欢迎给个🌟，帮助更多人发现它！
 
-遇到问题或有功能建议，欢迎提交 [GitHub Issue](https://github.com/houyanchao/dsh-prompt-library/issues)。
+遇到问题或有功能建议，欢迎提交 [GitHub Issue](https://github.com/houyanchao/dsh-prompt-box/issues)。
 
 ## 📄 许可证
 

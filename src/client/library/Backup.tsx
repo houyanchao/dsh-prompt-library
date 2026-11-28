@@ -84,7 +84,7 @@ export function PromptBackupTab({ t }: { readonly t: T }) {
                 <label className={css.importOption}>
                   <input
                     type="radio"
-                    name="dsh-prompt-library-import-mode"
+                    name="dsh-prompt-box-import-mode"
                     value="merge"
                     checked={importMode === 'merge'}
                     onChange={() => { setImportMode('merge') }}
@@ -98,7 +98,7 @@ export function PromptBackupTab({ t }: { readonly t: T }) {
                 <label className={css.importOption}>
                   <input
                     type="radio"
-                    name="dsh-prompt-library-import-mode"
+                    name="dsh-prompt-box-import-mode"
                     value="overwrite"
                     checked={importMode === 'overwrite'}
                     onChange={() => { setImportMode('overwrite') }}
